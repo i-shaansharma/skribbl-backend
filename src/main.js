@@ -11,7 +11,11 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "*", 
+        origin: [
+            "http://localhost:3000",
+            "https://skribbl-frontend-mocha.vercel.app",
+            /\.vercel\.app$/
+        ],
         methods: ["GET", "POST"]
     }
 });
@@ -154,9 +158,48 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('disconnect', () => {
-        console.log(`[-] Connection lost: ${socket.id}`);
-    });
+   socket.on('disconnect', () => {
+    console.log(`[-] Connection lost: ${socket.id}`);
+    
+    // Find which session this player was in
+    for (const [sessionId, session] of sessionEngine.activeSessions) {
+        if (session.activeParticipants.has(socket.id)) {
+            const playerName = session.activeParticipants.get(socket.id)?.displayName;
+            session.leaveSession(socket.id);
+            
+            // Notify remaining players
+            io.to(sessionId).emit('update_players', session.getParticipantRoster());
+            io.to(sessionId).emit('chat_message', {
+                playerName: 'System',
+                text: `${playerName} left the game`,
+                type: 'system'
+            });
+            
+            // If drawer left during active drawing, end the turn
+            if (session.matchState.activeDrawerId === socket.id && 
+                session.matchState.currentPhase === 'ActiveDrawing') {
+                session.endTurn();
+            }
+            
+            // If host left, assign new host
+            if (session.adminId === socket.id) {
+                const remaining = Array.from(session.activeParticipants.keys());
+                if (remaining.length > 0) {
+                    session.adminId = remaining[0];
+                    io.to(sessionId).emit('chat_message', {
+                        playerName: 'System',
+                        text: 'Host left. A new host has been assigned.',
+                        type: 'system'
+                    });
+                } else {
+                    // No players left, clean up session
+                    sessionEngine.terminateSession(sessionId);
+                }
+            }
+            break;
+        }
+    }
+});
 });
 
 

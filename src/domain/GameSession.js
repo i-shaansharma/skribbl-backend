@@ -92,7 +92,7 @@ class GameSession {
         this.io.to(this.sessionId).emit('round_start', {
             drawerId: this.matchState.activeDrawerId,
             phase: 'WordSelection',
-            round: this.matchState.roundNumber,
+            currentRound: this.matchState.roundNumber,
             totalRounds: this.sessionConfig.totalRounds
         });
 
@@ -187,6 +187,10 @@ class GameSession {
             const pointsEarned = Math.floor(timeMultiplier * 500) + 100; 
             
             participant.awardPoints(pointsEarned);
+
+            // Award drawer bonus points too
+            const drawer = this.activeParticipants.get(this.matchState.activeDrawerId);
+            if (drawer) drawer.awardPoints(50);
             
             this.io.to(this.sessionId).emit('guess_result', {
                 correct: true,
@@ -194,6 +198,15 @@ class GameSession {
                 playerName: participant.displayName,
                 points: pointsEarned
             });
+
+            // Check if all non-drawers have guessed correctly
+            const nonDrawers = Array.from(this.activeParticipants.values())
+                .filter(p => p.connectionId !== this.matchState.activeDrawerId);
+            const allGuessed = nonDrawers.every(p => p.hasCorrectlyGuessed);
+            if (allGuessed) {
+                setTimeout(() => this.endTurn(), 2000);
+            }
+
             return true; 
         }
         return false; 

@@ -7,7 +7,7 @@ class SessionEngine {
     }
 
     initializeSession(adminId, config, io) { // <-- Add 'io' here
-        const sessionId = nanoid(6); 
+        const sessionId = nanoid(6).toUpperCase().replace(/[^A-Z0-9]/g, 'X').substring(0, 6); 
         const newSession = new GameSession(sessionId, adminId, config, io); // <-- Pass 'io' here
         this.activeSessions.set(sessionId, newSession);
         return newSession;
