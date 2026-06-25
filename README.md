@@ -125,4 +125,12 @@ The frontend implementation is available here:
 * Private invite links
 * Mobile optimization
 
+---
+
+## License
+
+MIT License
+
+---
+
 Built by **Ishaan Sharma**
