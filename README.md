@@ -1,35 +1,81 @@
-# 🎨 Skribbl Backend
+# ⚙️ i-Sketch Backend
 
-A scalable real-time multiplayer drawing and guessing game backend inspired by Skribbl.io.
+A scalable real-time multiplayer game server powering **i-Sketch**, a drawing and guessing game inspired by Skribbl.io.
 
-Built using **Node.js**, **Express**, and **Socket.IO**, this backend handles game rooms, player synchronization, round management, scoring logic, drawing events, and real-time communication between players.
+Built with **Node.js**, **Express.js**, and **Socket.IO**, the backend manages game sessions, room coordination, player synchronization, scoring, timers, turn rotation, and real-time communication between connected clients.
 
 ---
 
 ## Features
 
-* Real-time multiplayer gameplay
-* Room creation and joining
+### Multiplayer Session Management
+
+* Create and join private rooms
+* Manage active game sessions
+* Player connection tracking
+* Disconnect and reconnection handling
+
+### Real-Time Communication
+
 * Live drawing synchronization
-* Word selection system
+* Instant chat messaging
+* Guess submission events
+* Score updates
+* Timer synchronization
+* Player state updates
+
+### Game Engine
+
+* Turn-based gameplay
+* Random word selection
+* Automatic drawer rotation
+* Dynamic score calculation
+* Multi-round support
+* Winner detection
+
+---
+
+## Architecture Highlights
+
+### Server-Authoritative Design
+
+The backend acts as the source of truth for:
+
+* Player management
+* Score calculation
+* Turn rotation
+* Round progression
+* Timer control
+* Session state synchronization
+
+This ensures all players remain synchronized while preventing client-side manipulation of game state.
+
+### Event-Driven Architecture
+
+Socket.IO is used to coordinate real-time communication between players, enabling low-latency updates for:
+
+* Drawing events
 * Guess validation
-* Automatic score calculation
-* Turn-based game flow
-* Round and timer management
-* Player disconnect handling
-* Reconnection support
-* CORS configuration for frontend integration
+* Chat messages
+* Round transitions
+* Leaderboard updates
+
+### Session-Based Game Management
+
+The application organizes gameplay into isolated game sessions, allowing multiple rooms to operate concurrently without affecting each other.
 
 ---
 
 ## Tech Stack
 
-* Node.js
-* Express.js
-* Socket.IO
-* JavaScript
-* REST APIs
-* WebSockets
+| Layer                  | Technology |
+| ---------------------- | ---------- |
+| Runtime                | Node.js    |
+| Framework              | Express.js |
+| Realtime Communication | Socket.IO  |
+| API                    | REST APIs  |
+| Networking             | WebSockets |
+| Language               | JavaScript |
 
 ---
 
@@ -37,32 +83,32 @@ Built using **Node.js**, **Express**, and **Socket.IO**, this backend handles ga
 
 ```bash
 src/
-├── controllers/
-├── routes/
+├── coordinators/
+├── domain/
+├── config/
 ├── socket/
 ├── services/
-├── utils/
-└── server.js
+└── main.js
 ```
 
 ---
 
 ## Getting Started
 
-### Clone the repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/i-shaansharma/skribbl-backend.git
 cd skribbl-backend
 ```
 
-### Install dependencies
+### Install Dependencies
 
 ```bash
 npm install
 ```
 
-### Run the server
+### Start the Server
 
 ```bash
 npm start
@@ -74,35 +120,11 @@ For development:
 npm run dev
 ```
 
----
+Server runs on:
 
-## Core Functionality
-
-### Room Management
-
-* Create game rooms
-* Join existing rooms
-* Manage player sessions
-* Handle player departures
-
-### Gameplay Engine
-
-* Word selection
-* Drawing turns
-* Guess validation
-* Round progression
-* Leaderboard updates
-
-### Real-Time Communication
-
-Socket.IO powers:
-
-* Drawing events
-* Chat messages
-* Guess submissions
-* Timer synchronization
-* Score updates
-* Player activity tracking
+```text
+http://localhost:4000
+```
 
 ---
 
@@ -116,14 +138,14 @@ The frontend implementation is available here:
 
 ## Future Improvements
 
-* Persistent game history
-* Database integration
+* Persistent game storage
 * User authentication
-* Friend system
 * Global leaderboards
+* Friend system
 * Spectator mode
-* Private invite links
-* Mobile optimization
+* Match history
+* Private invitation links
+* Horizontal scaling support
 
 ---
 
