@@ -1,4 +1,4 @@
-i-Sketch Backend
+# i-Sketch Backend
 
 A scalable real-time multiplayer game server powering **i-Sketch**, a drawing and guessing game inspired by Skribbl.io.
 
